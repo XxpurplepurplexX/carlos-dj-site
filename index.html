@@ -110,6 +110,14 @@
       border-bottom-color: var(--card-border);
     }
 
+    /* Su mobile l'header si nasconde scorrendo verso il basso (vedi script).
+       Si usa "top" e non "transform": un transform renderebbe di nuovo
+       l'header il riferimento del menu a schermo intero */
+    @media (max-width: 760px) {
+      header { transition: top 0.35s ease; }
+      header.hide { top: -100px; }
+    }
+
     .logo {
       font-weight: 800;
       letter-spacing: 0.15em;
@@ -542,9 +550,208 @@
       transition: color 0.25s, text-shadow 0.25s;
     }
 
-    .gig-link:hover {
+    button.gig-link {
+      background: none;
+      border: none;
+      border-bottom: 1px solid var(--pink);
+      padding: 0 0 2px;
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    .gig-link:hover,
+    .gig-link:focus-visible {
       color: #F9A8D4;
       text-shadow: 0 0 10px var(--pink);
+      outline: none;
+    }
+
+    /* ---------- Finestra "Info & biglietti" ---------- */
+    .gig-dialog {
+      width: min(540px, calc(100vw - 32px));
+      max-height: calc(100dvh - 48px);
+      margin: auto;
+      padding: 0;
+      color: var(--text);
+      background: #131017;
+      border: 1px solid rgba(139, 92, 246, 0.55);
+      border-radius: var(--radius);
+      box-shadow:
+        0 0 40px rgba(236, 72, 153, 0.3),
+        0 30px 80px rgba(0, 0, 0, 0.6);
+      overflow: auto;
+      overscroll-behavior: contain;
+    }
+
+    .gig-dialog[open] { animation: gd-in 0.35s cubic-bezier(0.2, 0.8, 0.2, 1); }
+
+    .gig-dialog::backdrop {
+      background: rgba(5, 5, 8, 0.72);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+
+    @keyframes gd-in {
+      from { opacity: 0; translate: 0 24px; }
+    }
+
+    .gd-inner { position: relative; padding: 30px 26px 26px; }
+
+    .gd-inner::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--violet), var(--pink));
+    }
+
+    .gd-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      font-size: 1.4rem;
+      line-height: 1;
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--card-border);
+      border-radius: 50%;
+      cursor: pointer;
+      transition: border-color 0.25s, box-shadow 0.25s;
+    }
+
+    .gd-close:hover,
+    .gd-close:focus-visible {
+      border-color: var(--pink);
+      box-shadow: 0 0 12px rgba(236, 72, 153, 0.5);
+      outline: none;
+    }
+
+    .gd-date {
+      font-size: 0.78rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .gd-inner h2 {
+      margin: 6px 44px 6px 0;
+      font-size: 1.7rem;
+      line-height: 1.2;
+    }
+
+    .gd-place {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .gd-desc { margin: 18px 0 20px; color: #DDD6FE; }
+
+    .gd-facts {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .gd-facts div {
+      padding: 10px 14px;
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+    }
+
+    .gd-facts dt {
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .gd-facts dd { font-weight: 600; }
+
+    .gd-section-title {
+      margin: 24px 0 10px;
+      font-size: 0.75rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .gd-lineup {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      list-style: none;
+    }
+
+    .gd-lineup li {
+      padding: 5px 12px;
+      font-size: 0.85rem;
+      border: 1px solid rgba(139, 92, 246, 0.5);
+      border-radius: 999px;
+    }
+
+    .gd-lineup li.headliner {
+      border-color: var(--pink);
+      box-shadow: 0 0 10px rgba(236, 72, 153, 0.35);
+    }
+
+    .gd-tickets { list-style: none; }
+
+    .gd-tickets li {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .gd-tickets li:last-child { border-bottom: none; }
+    .gd-tickets .price { font-weight: 800; white-space: nowrap; }
+    .gd-tickets li.sold { color: var(--muted); }
+    .gd-tickets li.sold .price { text-decoration: line-through; font-weight: 400; }
+    .gd-tickets li.sold .price::after { content: " · Esaurito"; text-decoration: none; display: inline-block; margin-left: 4px; color: var(--pink); }
+
+    .gd-cta {
+      display: block;
+      margin-top: 22px;
+      padding: 15px 20px;
+      text-align: center;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #fff;
+      background: linear-gradient(90deg, var(--violet), var(--pink));
+      border-radius: 999px;
+      box-shadow: 0 0 20px rgba(236, 72, 153, 0.45);
+      transition: box-shadow 0.25s, transform 0.25s;
+    }
+
+    .gd-cta:hover,
+    .gd-cta:focus-visible {
+      box-shadow: 0 0 30px rgba(236, 72, 153, 0.7), 0 0 50px rgba(139, 92, 246, 0.4);
+      transform: translateY(-2px);
+      outline: none;
+    }
+
+    .gd-note {
+      margin-top: 12px;
+      font-size: 0.8rem;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    @media (max-width: 480px) {
+      .gd-inner { padding: 28px 18px 20px; }
+      .gd-inner h2 { font-size: 1.4rem; }
     }
 
     /* ---------- Responsive ---------- */
@@ -655,6 +862,11 @@
 
       <div class="gigs" id="gigs" data-stagger tabindex="0" aria-label="Elenco concerti"></div>
     </section>
+
+    <!-- Dettagli del concerto: il contenuto viene inserito dallo script -->
+    <dialog class="gig-dialog" id="gig-dialog" aria-labelledby="gd-title">
+      <div class="gd-inner"></div>
+    </dialog>
   </main>
 
   <footer class="site-footer">
@@ -684,16 +896,92 @@
   <script type="module">
     const signal = window.pageSignal;
 
-    // Dati concerti
+    // Dati concerti (dettagli e prezzi inventati: progetto didattico)
+    // access: "tickets" = biglietti in vendita, "free" = ingresso libero, "private" = su invito
     const gigs = [
-      { date: "2026-10-17", venue: "Foro Indie Rocks!", city: "Roma Sur, CDMX", type: "Club Night" },
-      { date: "2026-10-31", venue: "Zócalo Stage", city: "Centro Histórico, CDMX", type: "Festival · Día de Muertos", violet: true },
-      { date: "2026-11-08", venue: "Rooftop Condesa", city: "Condesa, CDMX", type: "Sunset Session" },
-      { date: "2026-11-21", venue: "Mamita's Beach Club", city: "Playa del Carmen", type: "Beach Party", violet: true },
-      { date: "2026-12-05", venue: "Bar Americas", city: "Guadalajara", type: "Club Night" },
-      { date: "2026-12-19", venue: "Private Event", city: "Polanco, CDMX", type: "Evento privato", violet: true },
-      { date: "2026-12-31", venue: "Terraza Reforma", city: "Juárez, CDMX", type: "Capodanno · NYE" },
-      { date: "2027-01-24", venue: "Brooklyn Mirage", city: "New York, USA", type: "Tour internazionale", violet: true }
+      {
+        date: "2026-10-17", venue: "Foro Indie Rocks!", city: "Roma Sur, CDMX", type: "Club Night",
+        desc: "Una notte di house latina e remix reggaeton nel cuore della Roma: luci al neon, impianto potente e tre ore di set di Carlos.",
+        doors: "22:00", set: "00:30 – 03:30", age: "18+", dress: "Libero",
+        lineup: ["DJ Carlos", "Luna Roja", "Kiko Beats"],
+        access: "tickets",
+        tickets: [
+          { name: "Early Bird", price: "250 MXN", sold: true },
+          { name: "Ingresso generale", price: "350 MXN" },
+          { name: "VIP · tavolo per 4", price: "2.400 MXN" }
+        ]
+      },
+      {
+        date: "2026-10-31", venue: "Zócalo Stage", city: "Centro Histórico, CDMX", type: "Festival · Día de Muertos", violet: true,
+        desc: "Il palco della festa del Día de Muertos in piazza: Carlos chiude la serata con un set tra cumbia elettronica e afro house.",
+        doors: "17:00", set: "21:00 – 22:30", age: "Tutte le età", dress: "Trucco da Catrina benvenuto",
+        lineup: ["Sonido Calavera", "Mariachi Electro", "DJ Carlos"],
+        access: "free",
+        note: "Ingresso libero fino a esaurimento posti: consigliato arrivare presto."
+      },
+      {
+        date: "2026-11-08", venue: "Rooftop Condesa", city: "Condesa, CDMX", type: "Sunset Session",
+        desc: "Deep house e melodic al tramonto, con vista sui tetti della Condesa. Posti limitati.",
+        doors: "17:30", set: "18:00 – 21:00", age: "21+", dress: "Smart casual",
+        lineup: ["DJ Carlos"],
+        access: "tickets",
+        tickets: [
+          { name: "Ingresso generale", price: "400 MXN" },
+          { name: "Ingresso + drink di benvenuto", price: "550 MXN" }
+        ]
+      },
+      {
+        date: "2026-11-21", venue: "Mamita's Beach Club", city: "Playa del Carmen", type: "Beach Party", violet: true,
+        desc: "Piedi nella sabbia e tech house fino al tramonto sulla spiaggia di Playa del Carmen.",
+        doors: "14:00", set: "16:00 – 19:00", age: "18+", dress: "Costume e sandali",
+        lineup: ["Coral Sounds", "DJ Carlos", "Marea"],
+        access: "tickets",
+        tickets: [
+          { name: "Ingresso generale", price: "600 MXN" },
+          { name: "Daybed · fino a 4 persone", price: "4.500 MXN" }
+        ]
+      },
+      {
+        date: "2026-12-05", venue: "Bar Americas", city: "Guadalajara", type: "Club Night",
+        desc: "Prima volta di Carlos a Guadalajara: una notte di house e techno in uno dei club storici della città.",
+        doors: "23:00", set: "01:00 – 03:00", age: "18+", dress: "Libero",
+        lineup: ["Tapatío Bass", "DJ Carlos"],
+        access: "tickets",
+        tickets: [
+          { name: "Ingresso generale", price: "300 MXN" },
+          { name: "VIP · accesso balconata", price: "800 MXN" }
+        ]
+      },
+      {
+        date: "2026-12-19", venue: "Private Event", city: "Polanco, CDMX", type: "Evento privato", violet: true,
+        desc: "Festa privata aziendale di fine anno. L'evento è riservato agli invitati: non sono disponibili biglietti.",
+        doors: "Riservato", set: "Riservato", age: "Su invito", dress: "Elegante",
+        lineup: ["DJ Carlos"],
+        access: "private"
+      },
+      {
+        date: "2026-12-31", venue: "Terraza Reforma", city: "Juárez, CDMX", type: "Capodanno · NYE",
+        desc: "Il conto alla rovescia più luminoso di Reforma: Carlos accompagna il passaggio al 2027 con un set speciale di Capodanno.",
+        doors: "21:00", set: "23:00 – 02:00", age: "21+", dress: "Elegante · tocco di glitter",
+        lineup: ["Noche Dorada", "DJ Carlos", "Velvet Room"],
+        access: "tickets",
+        tickets: [
+          { name: "Early Bird", price: "1.500 MXN", sold: true },
+          { name: "Ingresso generale", price: "1.900 MXN" },
+          { name: "Open bar tutta la notte", price: "3.200 MXN" }
+        ]
+      },
+      {
+        date: "2027-01-24", venue: "Brooklyn Mirage", city: "New York, USA", type: "Tour internazionale", violet: true,
+        desc: "Prima data del tour internazionale: Carlos porta il suono di Città del Messico a Brooklyn.",
+        doors: "20:00", set: "22:00 – 00:00", age: "21+", dress: "Libero",
+        lineup: ["DJ Carlos", "Night Shift NYC", "Amara"],
+        access: "tickets",
+        tickets: [
+          { name: "General Admission", price: "45 USD" },
+          { name: "Premium · area palco", price: "85 USD" }
+        ]
+      }
     ];
 
     const pin = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg>';
@@ -702,7 +990,7 @@
     const monthFmt = new Intl.DateTimeFormat("it-IT", { month: "short" });
     const dayFmt = new Intl.DateTimeFormat("it-IT", { weekday: "long" });
 
-    track.innerHTML = gigs.map(g => {
+    track.innerHTML = gigs.map((g, i) => {
       const d = new Date(g.date + "T12:00:00");
       return `
         <article class="gig">
@@ -715,9 +1003,71 @@
           <span class="gig-type${g.violet ? " violet" : ""}">${g.type}</span>
           <h3>${g.venue}</h3>
           <p class="gig-place">${pin} ${g.city}</p>
-          <a href="#prenota" class="gig-link">Info &amp; biglietti</a>
+          <button type="button" class="gig-link" data-gig="${i}" aria-haspopup="dialog">Info &amp; biglietti</button>
         </article>`;
     }).join("");
+
+    // Finestra "Info & biglietti"
+    const dialog = document.getElementById("gig-dialog");
+    const fullDateFmt = new Intl.DateTimeFormat("it-IT", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+
+    function openGig(g) {
+      const d = new Date(g.date + "T12:00:00");
+      const dateText = fullDateFmt.format(d);
+      const facts = [["Apertura porte", g.doors], ["Set di Carlos", g.set], ["Età", g.age], ["Dress code", g.dress]];
+
+      let access = "";
+      if (g.access === "tickets") {
+        const subject = encodeURIComponent(`Biglietti – ${g.venue} (${dateText})`);
+        access = `
+          <h3 class="gd-section-title">Biglietti</h3>
+          <ul class="gd-tickets">
+            ${g.tickets.map(t => `<li${t.sold ? ' class="sold"' : ""}><span>${t.name}</span><span class="price">${t.price}</span></li>`).join("")}
+          </ul>
+          <a class="gd-cta" href="mailto:booking@djcarlos.com?subject=${subject}">Richiedi biglietti</a>
+          <p class="gd-note">Ti risponderemo via e-mail con la conferma e le istruzioni di pagamento.</p>`;
+      } else if (g.access === "free") {
+        access = `
+          <h3 class="gd-section-title">Ingresso</h3>
+          <ul class="gd-tickets"><li><span>Ingresso libero</span><span class="price">Gratis</span></li></ul>
+          <p class="gd-note">${g.note}</p>`;
+      } else {
+        access = `
+          <a class="gd-cta" href="booking.html">Prenota Carlos per il tuo evento</a>
+          <p class="gd-note">Vuoi Carlos a una tua festa privata? Compila il modulo di prenotazione.</p>`;
+      }
+
+      dialog.querySelector(".gd-inner").innerHTML = `
+        <button type="button" class="gd-close" aria-label="Chiudi">×</button>
+        <p class="gd-date">${dateText}</p>
+        <h2 id="gd-title">${g.venue}</h2>
+        <p class="gd-place">${pin} ${g.city} · ${g.type}</p>
+        <p class="gd-desc">${g.desc}</p>
+        <dl class="gd-facts">
+          ${facts.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join("")}
+        </dl>
+        <h3 class="gd-section-title">Line-up</h3>
+        <ul class="gd-lineup">
+          ${g.lineup.map(n => `<li${n === "DJ Carlos" ? ' class="headliner"' : ""}>${n}</li>`).join("")}
+        </ul>
+        ${access}`;
+
+      dialog.showModal();
+      dialog.scrollTop = 0;
+      document.body.style.overflow = "hidden";
+    }
+
+    track.addEventListener("click", e => {
+      const btn = e.target.closest(".gig-link");
+      if (!btn || moved) return;
+      openGig(gigs[btn.dataset.gig]);
+    });
+
+    dialog.addEventListener("click", e => {
+      // Chiude con la X o cliccando fuori dalla finestra (sullo sfondo)
+      if (e.target === dialog || e.target.closest(".gd-close")) dialog.close();
+    });
+    dialog.addEventListener("close", () => { document.body.style.overflow = ""; });
 
     // Pulsanti di scorrimento
     const prev = document.getElementById("prev");
@@ -788,10 +1138,18 @@
       if (e.key === "ArrowLeft")  { e.preventDefault(); prev.click(); }
     });
 
-    // Header allo scroll
+    // Header allo scroll: su mobile si nasconde scorrendo verso il basso
+    // e ricompare appena si scorre verso l'alto
     const header = document.getElementById("header");
+    const mobileQuery = matchMedia("(max-width: 760px)");
+    let lastY = window.scrollY;
     window.addEventListener("scroll", () => {
-      header.classList.toggle("scrolled", window.scrollY > 30);
+      const y = window.scrollY;
+      header.classList.toggle("scrolled", y > 30);
+      if (Math.abs(y - lastY) < 6) return;
+      const menuOpen = header.querySelector(".menu-toggle").getAttribute("aria-expanded") === "true";
+      header.classList.toggle("hide", mobileQuery.matches && y > lastY && y > 120 && !menuOpen);
+      lastY = y;
     }, { passive: true, signal });
 
     // Menu mobile

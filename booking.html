@@ -112,6 +112,14 @@
       border-bottom-color: var(--card-border);
     }
 
+    /* Su mobile l'header si nasconde scorrendo verso il basso (vedi script).
+       Si usa "top" e non "transform": un transform renderebbe di nuovo
+       l'header il riferimento del menu a schermo intero */
+    @media (max-width: 760px) {
+      header { transition: top 0.35s ease; }
+      header.hide { top: -100px; }
+    }
+
     .logo {
       font-weight: 800;
       letter-spacing: 0.15em;
@@ -849,10 +857,18 @@
       $("name").focus();
     });
 
-    // Header allo scroll
+    // Header allo scroll: su mobile si nasconde scorrendo verso il basso
+    // e ricompare appena si scorre verso l'alto
     const header = $("header");
+    const mobileQuery = matchMedia("(max-width: 760px)");
+    let lastY = window.scrollY;
     window.addEventListener("scroll", () => {
-      header.classList.toggle("scrolled", window.scrollY > 30);
+      const y = window.scrollY;
+      header.classList.toggle("scrolled", y > 30);
+      if (Math.abs(y - lastY) < 6) return;
+      const menuOpen = header.querySelector(".menu-toggle").getAttribute("aria-expanded") === "true";
+      header.classList.toggle("hide", mobileQuery.matches && y > lastY && y > 120 && !menuOpen);
+      lastY = y;
     }, { passive: true, signal });
 
     // Menu mobile
