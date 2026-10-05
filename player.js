@@ -21,7 +21,8 @@
     { title: "Latin",           artist: "The_Mountain", file: "audio/latin.mp3" },
     { title: "Latin Jazz",      artist: "alex-morgan",  file: "audio/latin-jazz.mp3" },
     { title: "Brazilian Phonk", artist: "alex-morgan",  file: "audio/brazilian-phonk.mp3" },
-    { title: "Blue Skies Only", artist: "vibemode",     file: "audio/blue-skies-only.mp3" }
+    { title: "Blue Skies Only", artist: "vibemode",     file: "audio/blue-skies-only.mp3" },
+    { title: "Background Pop",  artist: "kulakovka",    file: "audio/background-pop.mp3" }
   ];
 
   const MODES = ["shuffle", "all", "one"];
