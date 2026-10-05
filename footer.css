@@ -75,3 +75,21 @@
   .social-links a { transition: none; }
   .social-links a:hover { transform: none; }
 }
+
+.footer-credits {
+  margin-top: -14px;
+  font-size: 0.75rem;
+  opacity: 0.7;
+}
+
+.footer-credits a {
+  border-bottom: 1px solid rgba(139, 92, 246, 0.5);
+  transition: color 0.25s, border-color 0.25s;
+}
+
+.footer-credits a:hover,
+.footer-credits a:focus-visible {
+  color: #F9A8D4;
+  border-color: var(--pink);
+  outline: none;
+}

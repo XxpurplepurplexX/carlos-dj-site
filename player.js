@@ -16,14 +16,13 @@
 (() => {
   if (window.djPlayer) return;
 
+  // Brani da Pixabay (Licenza per i contenuti di Pixabay), con il loro autore
   const PLAYLIST = [
-    { title: "Halloween",  file: "audio/Halloween.mp3" },
-    { title: "POEM",       file: "audio/POEM.mp3" },
-    { title: "Fake",       file: "audio/Fake.mp3" },
-    { title: "Body",       file: "audio/Body.mp3" },
-    { title: "Demon Mode", file: "audio/Demon Mode.mp3" }
+    { title: "Latin",           artist: "The_Mountain", file: "audio/latin.mp3" },
+    { title: "Latin Jazz",      artist: "alex-morgan",  file: "audio/latin-jazz.mp3" },
+    { title: "Brazilian Phonk", artist: "alex-morgan",  file: "audio/brazilian-phonk.mp3" },
+    { title: "Blue Skies Only", artist: "vibemode",     file: "audio/blue-skies-only.mp3" }
   ];
-  const ARTIST = "Redda";
 
   const MODES = ["shuffle", "all", "one"];
   const MODE_NAMES = { shuffle: "Shuffle", all: "Repeat All", one: "Repeat One" };
@@ -79,7 +78,7 @@
       <div class="now">
         <span class="now-tag"><span class="mini-eq" aria-hidden="true"><i></i><i></i><i></i></span> In riproduzione</span>
         <h2 class="now-title">—</h2>
-        <p class="now-artist">${ARTIST}</p>
+        <p class="now-artist">—</p>
       </div>
 
       <div class="progress">
@@ -122,7 +121,7 @@
               <span class="mini-eq" aria-hidden="true"><i></i><i></i><i></i></span>
               <span>
                 <span class="track-title">${t.title}</span>
-                <span class="track-artist">${ARTIST}</span>
+                <span class="track-artist">${t.artist}</span>
               </span>
               <span class="track-dur">–:––</span>
             </button>
@@ -141,7 +140,7 @@
         <span class="mini-disc" aria-hidden="true"></span>
         <span class="mini-text">
           <span class="mini-title">—</span>
-          <span class="mini-artist">${ARTIST}</span>
+          <span class="mini-artist">—</span>
         </span>
       </button>
       <span class="mini-time"><span class="mini-cur">0:00</span> / <span class="mini-dur">0:00</span></span>
@@ -384,7 +383,7 @@
     <button class="tap-btn" type="button">
       <span class="tap-ring">${ICON.play}</span>
       <span class="tap-text">Tocca per riprodurre</span>
-      <span class="tap-sub">${ARTIST} · DJ Carlos Mix</span>
+      <span class="tap-sub">DJ Carlos Mix</span>
     </button>
     <button class="tap-skip" type="button">Entra senza audio</button>`;
   document.body.appendChild(gate);
@@ -456,6 +455,8 @@
 
     $p(".now-title").textContent = t.title;
     $m(".mini-title").textContent = t.title;
+    $p(".now-artist").textContent = t.artist;
+    $m(".mini-artist").textContent = t.artist;
     $p(".pl-error").textContent = "";
     seeks.forEach(r => { r.max = 0; });
     showTime(0);
@@ -467,7 +468,7 @@
     });
 
     if ("mediaSession" in navigator) {
-      navigator.mediaSession.metadata = new MediaMetadata({ title: t.title, artist: ARTIST, album: "DJ Carlos — Mix" });
+      navigator.mediaSession.metadata = new MediaMetadata({ title: t.title, artist: t.artist, album: "DJ Carlos — Mix" });
     }
 
     if (autoplay) play();
