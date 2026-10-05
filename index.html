@@ -749,7 +749,203 @@
       color: var(--muted);
     }
 
+    /* Modulo richiesta biglietti */
+    .gd-form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 6px;
+    }
+
+    .gd-field { display: flex; flex-direction: column; min-width: 0; }
+    .gd-field.full { grid-column: 1 / -1; }
+
+    .gd-field label {
+      margin-bottom: 6px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #D4D4D8;
+    }
+
+    .gd-field label .req { color: var(--pink); margin-left: 3px; }
+
+    .gd-field input,
+    .gd-field select {
+      width: 100%;
+      min-height: 48px;
+      padding: 12px 14px;
+      font-family: inherit;
+      font-size: 16px; /* sotto i 16px Safari iOS ingrandisce la pagina */
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      outline: none;
+      color-scheme: dark;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    }
+
+    .gd-field input::placeholder { color: #71717A; }
+
+    .gd-field input:focus,
+    .gd-field select:focus {
+      border-color: var(--violet);
+      background: rgba(139, 92, 246, 0.08);
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.25), 0 0 18px rgba(236, 72, 153, 0.25);
+    }
+
+    .gd-field select {
+      -webkit-appearance: none;
+      appearance: none;
+      cursor: pointer;
+      padding-right: 40px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23EC4899'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 22px;
+    }
+
+    .gd-field select option { background: #18151F; color: var(--text); }
+
+    .gd-error {
+      display: none;
+      margin-top: 6px;
+      font-size: 0.8rem;
+      color: #FB7185;
+    }
+
+    .gd-field.invalid input,
+    .gd-field.invalid select {
+      border-color: #FB7185;
+      box-shadow: 0 0 0 3px rgba(251, 113, 133, 0.2);
+    }
+
+    .gd-field.invalid .gd-error { display: block; }
+
+    .gd-total {
+      grid-column: 1 / -1;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 14px 16px;
+      border: 1px solid rgba(139, 92, 246, 0.4);
+      border-radius: 12px;
+      background: rgba(139, 92, 246, 0.08);
+    }
+
+    .gd-total span:first-child {
+      font-size: 0.75rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .gd-total strong {
+      font-size: 1.25rem;
+      background: linear-gradient(90deg, #C4B5FD, #F9A8D4);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .gd-hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+
+    button.gd-cta {
+      grid-column: 1 / -1;
+      width: 100%;
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-family: inherit;
+      font-size: 1rem;
+      border: none;
+      cursor: pointer;
+    }
+
+    button.gd-cta:disabled { opacity: 0.7; cursor: wait; transform: none; }
+
+    .gd-spinner {
+      display: none;
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255, 255, 255, 0.35);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: gd-spin 0.8s linear infinite;
+    }
+
+    .gd-cta.loading .gd-spinner { display: block; }
+
+    @keyframes gd-spin { to { transform: rotate(360deg); } }
+
+    .gd-status {
+      grid-column: 1 / -1;
+      min-height: 1.2em;
+      font-size: 0.88rem;
+      text-align: center;
+      color: #FB7185;
+    }
+
+    .gd-status:empty { display: none; }
+
+    .gd-form .gd-note { grid-column: 1 / -1; margin-top: 0; }
+
+    /* Conferma dopo l'invio */
+    .gd-success {
+      padding: 18px 0 4px;
+      text-align: center;
+      animation: gd-in 0.5s ease both;
+    }
+
+    .gd-check {
+      width: 88px;
+      height: 88px;
+      margin: 0 auto 22px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--violet), var(--pink));
+      box-shadow: 0 0 30px rgba(236, 72, 153, 0.6), 0 0 70px rgba(139, 92, 246, 0.45);
+    }
+
+    .gd-check svg { width: 42px; height: 42px; stroke: #fff; }
+
+    .gd-check path {
+      stroke-dasharray: 30;
+      stroke-dashoffset: 30;
+      animation: gd-draw 0.5s 0.3s ease forwards;
+    }
+
+    @keyframes gd-draw { to { stroke-dashoffset: 0; } }
+
+    .gd-success h3 {
+      font-family: 'Monoton', cursive;
+      font-weight: 400;
+      font-size: clamp(1.5rem, 6vw, 2rem);
+      line-height: 1.2;
+      color: #FFF5FB;
+      text-shadow:
+        0 0 6px #fff,
+        0 0 16px var(--pink),
+        0 0 32px var(--pink),
+        0 0 56px var(--violet);
+    }
+
+    .gd-success p { margin: 16px auto 0; max-width: 400px; color: #D4D4D8; }
+    .gd-success p strong { color: #F9A8D4; font-weight: 600; }
+
+    .gd-success .gd-cta { margin-top: 26px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .gd-check path { stroke-dashoffset: 0; }
+    }
+
     @media (max-width: 480px) {
+      .gd-form { grid-template-columns: 1fr; }
       .gd-inner { padding: 28px 18px 20px; }
       .gd-inner h2 { font-size: 1.4rem; }
     }
@@ -1018,14 +1214,58 @@
 
       let access = "";
       if (g.access === "tickets") {
-        const subject = encodeURIComponent(`Biglietti – ${g.venue} (${dateText})`);
+        const available = g.tickets.filter(t => !t.sold);
         access = `
           <h3 class="gd-section-title">Biglietti</h3>
           <ul class="gd-tickets">
             ${g.tickets.map(t => `<li${t.sold ? ' class="sold"' : ""}><span>${t.name}</span><span class="price">${t.price}</span></li>`).join("")}
           </ul>
-          <a class="gd-cta" href="mailto:booking@djcarlos.com?subject=${subject}">Richiedi biglietti</a>
-          <p class="gd-note">Ti risponderemo via e-mail con la conferma e le istruzioni di pagamento.</p>`;
+
+          <h3 class="gd-section-title">Richiedi i biglietti</h3>
+          <form class="gd-form" action="${FORM_ENDPOINT}" method="POST" novalidate>
+            <input type="hidden" name="_subject" value="Richiesta biglietti — ${g.venue} (${dateText})">
+            <input type="hidden" name="evento" value="${g.venue} · ${g.city} · ${dateText}">
+            <input type="text" name="_gotcha" class="gd-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+            <div class="gd-field full">
+              <label for="gd-name">Nome e cognome<span class="req">*</span></label>
+              <input id="gd-name" name="nome" type="text" autocomplete="name" placeholder="Mario Rossi" required minlength="2">
+              <span class="gd-error">Inserisci il tuo nome</span>
+            </div>
+
+            <div class="gd-field full">
+              <label for="gd-email">E-mail<span class="req">*</span></label>
+              <input id="gd-email" name="email" type="email" inputmode="email" autocomplete="email" autocapitalize="off" spellcheck="false" placeholder="nome@esempio.com" required>
+              <span class="gd-error">Inserisci un indirizzo e-mail valido</span>
+            </div>
+
+            <div class="gd-field">
+              <label for="gd-type">Biglietto<span class="req">*</span></label>
+              <select id="gd-type" name="biglietto" required>
+                ${available.map(t => `<option value="${t.name} — ${t.price}">${t.name}</option>`).join("")}
+              </select>
+            </div>
+
+            <div class="gd-field">
+              <label for="gd-qty">Quantità<span class="req">*</span></label>
+              <input id="gd-qty" name="quantita" type="number" inputmode="numeric" min="1" max="10" value="1" required>
+              <span class="gd-error">Da 1 a 10 biglietti</span>
+            </div>
+
+            <div class="gd-total" aria-live="polite">
+              <span>Totale stimato</span>
+              <strong class="gd-total-value"></strong>
+            </div>
+            <input type="hidden" name="totale" class="gd-total-input">
+
+            <p class="gd-status" role="alert"></p>
+
+            <button type="submit" class="gd-cta">
+              <span class="gd-spinner" aria-hidden="true"></span>
+              <span class="gd-cta-label">Richiedi biglietti</span>
+            </button>
+            <p class="gd-note">Ti risponderemo via e-mail con la conferma e le istruzioni di pagamento.</p>
+          </form>`;
       } else if (g.access === "free") {
         access = `
           <h3 class="gd-section-title">Ingresso</h3>
@@ -1052,9 +1292,121 @@
         </ul>
         ${access}`;
 
+      if (g.access === "tickets") setupTicketForm(g);
+
       dialog.showModal();
       dialog.scrollTop = 0;
       document.body.style.overflow = "hidden";
+    }
+
+    // ---------- Modulo richiesta biglietti (invio a Formspree) ----------
+    const FORM_ENDPOINT = "https://formspree.io/f/mdeanveo";
+    const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+    // "2.400 MXN" → { amount: 2400, currency: "MXN" }
+    function parsePrice(p) {
+      const [num, currency] = p.split(" ");
+      return { amount: Number(num.replace(/\./g, "")), currency };
+    }
+
+    function setupTicketForm(g) {
+      const form = dialog.querySelector(".gd-form");
+      const type = form.querySelector("#gd-type");
+      const qty = form.querySelector("#gd-qty");
+      const totalOut = form.querySelector(".gd-total-value");
+      const totalIn = form.querySelector(".gd-total-input");
+      const status = form.querySelector(".gd-status");
+      const submit = form.querySelector('button[type="submit"]');
+
+      function updateTotal() {
+        const n = Math.min(10, Math.max(1, parseInt(qty.value, 10) || 1));
+        const { amount, currency } = parsePrice(type.value.split(" — ")[1]);
+        // Separatore delle migliaia sempre presente, come nei prezzi in lista ("3.200")
+        const text = `${String(amount * n).replace(/\B(?=(\d{3})+(?!\d))/g, ".")} ${currency}`;
+        totalOut.textContent = text;
+        totalIn.value = text;
+      }
+
+      function check(input) {
+        let ok = input.checkValidity();
+        if (input.type === "email") ok = ok && EMAIL_RE.test(input.value.trim());
+        input.closest(".gd-field").classList.toggle("invalid", !ok);
+        return ok;
+      }
+
+      type.addEventListener("change", updateTotal);
+      qty.addEventListener("input", updateTotal);
+      form.querySelectorAll("input:not([type=hidden]):not(.gd-hp)").forEach(input => {
+        input.addEventListener("blur", () => { if (input.value) check(input); });
+        input.addEventListener("input", () => {
+          if (input.closest(".gd-field").classList.contains("invalid")) check(input);
+        });
+      });
+      updateTotal();
+
+      form.addEventListener("submit", async e => {
+        e.preventDefault();
+        status.textContent = "";
+        const fields = [...form.querySelectorAll("#gd-name, #gd-email, #gd-qty")];
+        const invalid = fields.filter(f => !check(f));
+        if (invalid.length) {
+          invalid[0].focus();
+          return;
+        }
+
+        submit.disabled = true;
+        submit.classList.add("loading");
+        submit.querySelector(".gd-cta-label").textContent = "Invio in corso…";
+
+        try {
+          const res = await fetch(FORM_ENDPOINT, {
+            method: "POST",
+            body: new FormData(form),
+            headers: { Accept: "application/json" }
+          });
+
+          if (res.ok) {
+            showTicketSuccess(g, {
+              name: form.querySelector("#gd-name").value.trim(),
+              email: form.querySelector("#gd-email").value.trim(),
+              qty: parseInt(qty.value, 10),
+              type: type.selectedOptions[0].textContent
+            });
+            return;
+          }
+          const data = await res.json().catch(() => ({}));
+          const detail = data.errors ? data.errors.map(x => x.message).join(", ") : "";
+          status.textContent = "Invio non riuscito" + (detail ? `: ${detail}` : ". Riprova tra qualche istante.");
+        } catch (err) {
+          status.textContent = "Errore di connessione. Controlla la rete e riprova.";
+        }
+        submit.disabled = false;
+        submit.classList.remove("loading");
+        submit.querySelector(".gd-cta-label").textContent = "Richiedi biglietti";
+      });
+    }
+
+    function showTicketSuccess(g, data) {
+      const inner = dialog.querySelector(".gd-inner");
+      inner.innerHTML = `
+        <button type="button" class="gd-close" aria-label="Chiudi">×</button>
+        <div class="gd-success" tabindex="-1">
+          <div class="gd-check" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+          </div>
+          <h3>Richiesta inviata!</h3>
+          <p>Grazie <strong class="s-name"></strong>, abbiamo ricevuto la tua richiesta per
+            <strong class="s-tickets"></strong> a <strong class="s-venue"></strong>.</p>
+          <p>Ti scriveremo presto a <strong class="s-email"></strong> con la conferma e le istruzioni di pagamento.</p>
+          <button type="button" class="gd-cta gd-done">Chiudi</button>
+        </div>`;
+      // I dati inseriti dall'utente vanno come testo, mai come HTML
+      inner.querySelector(".s-name").textContent = data.name;
+      inner.querySelector(".s-tickets").textContent = `${data.qty} × ${data.type}`;
+      inner.querySelector(".s-venue").textContent = g.venue;
+      inner.querySelector(".s-email").textContent = data.email;
+      dialog.scrollTop = 0;
+      inner.querySelector(".gd-success").focus();
     }
 
     track.addEventListener("click", e => {
@@ -1065,7 +1417,7 @@
 
     dialog.addEventListener("click", e => {
       // Chiude con la X o cliccando fuori dalla finestra (sullo sfondo)
-      if (e.target === dialog || e.target.closest(".gd-close")) dialog.close();
+      if (e.target === dialog || e.target.closest(".gd-close, .gd-done")) dialog.close();
     });
     dialog.addEventListener("close", () => { document.body.style.overflow = ""; });
 
