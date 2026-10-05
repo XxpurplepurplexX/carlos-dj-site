@@ -1,0 +1,27 @@
+# Variabili d'ambiente e segreti
+.env
+.env.*
+!.env.example
+
+# Cartelle locali di hosting / tool
+.vercel/
+.netlify/
+.claude/
+node_modules/
+
+# Impostazioni degli editor
+.vscode/
+.idea/
+*.code-workspace
+
+# Log e file temporanei
+*.log
+*.tmp
+*.bak
+*~
+_debug.html
+
+# File di sistema
+.DS_Store
+Thumbs.db
+desktop.ini

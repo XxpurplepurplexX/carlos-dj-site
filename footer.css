@@ -1,0 +1,77 @@
+/* ---------- Footer (condiviso da tutte le pagine) ---------- */
+.site-footer {
+  position: relative;
+  margin-top: 40px;
+  padding: 44px 20px 36px;
+  background: linear-gradient(180deg, rgba(13, 13, 13, 0.92), #08080A);
+  color: var(--muted);
+  font-size: 0.85rem;
+  text-align: center;
+  border-top: 1px solid transparent;
+  border-image: linear-gradient(90deg, transparent, var(--violet), var(--pink), var(--violet), transparent) 1;
+  box-shadow: 0 -10px 40px -20px rgba(236, 72, 153, 0.45);
+}
+
+.footer-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+}
+
+.social-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px;
+  list-style: none;
+}
+
+.social-links a {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(139, 92, 246, 0.55);
+  transition: color 0.25s, border-color 0.25s, box-shadow 0.25s, transform 0.25s;
+}
+
+.social-links svg { width: 20px; height: 20px; fill: currentColor; }
+
+.social-links a:hover,
+.social-links a:focus-visible {
+  color: #F9A8D4;
+  border-color: var(--pink);
+  box-shadow: 0 0 14px rgba(236, 72, 153, 0.55), inset 0 0 10px rgba(139, 92, 246, 0.35);
+  transform: translateY(-2px);
+  outline: none;
+}
+
+.footer-email {
+  color: var(--text);
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  padding-bottom: 2px;
+  border-bottom: 1px solid var(--violet);
+  transition: color 0.25s, border-color 0.25s, text-shadow 0.25s;
+}
+
+.footer-email:hover,
+.footer-email:focus-visible {
+  color: #F9A8D4;
+  border-color: var(--pink);
+  text-shadow: 0 0 10px var(--pink);
+  outline: none;
+}
+
+.footer-copy { font-size: 0.8rem; opacity: 0.85; }
+
+@media (prefers-reduced-motion: reduce) {
+  .social-links a { transition: none; }
+  .social-links a:hover { transform: none; }
+}

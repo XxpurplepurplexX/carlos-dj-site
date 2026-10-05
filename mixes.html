@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mix — DJ Carlos</title>
+  <meta name="description" content="Ascolta i mix di DJ Carlos.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Monoton&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0D0D0D;
+      --violet: #8B5CF6;
+      --pink: #EC4899;
+      --text: #F5F3FF;
+      --muted: #A1A1AA;
+      --card: rgba(255, 255, 255, 0.04);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --radius: 18px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Outfit', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; }
+
+    /* ---------- Sfondo animato ---------- */
+    .bg {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      overflow: hidden;
+      background: var(--bg);
+    }
+
+    .bg::before {
+      content: "";
+      position: absolute;
+      inset: -50%;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(139, 92, 246, 0.35), transparent 40%),
+        radial-gradient(circle at 70% 60%, rgba(236, 72, 153, 0.30), transparent 40%),
+        radial-gradient(circle at 50% 90%, rgba(139, 92, 246, 0.20), transparent 45%);
+      filter: blur(60px);
+      animation: drift 18s ease-in-out infinite alternate;
+    }
+
+    .bg::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, rgba(139, 92, 246, 0.12), rgba(236, 72, 153, 0.12), rgba(139, 92, 246, 0.12));
+      background-size: 300% 300%;
+      animation: shift 12s ease infinite;
+    }
+
+    @keyframes drift {
+      0%   { transform: translate(0, 0) rotate(0deg) scale(1); }
+      50%  { transform: translate(5%, -4%) rotate(20deg) scale(1.1); }
+      100% { transform: translate(-5%, 4%) rotate(-15deg) scale(1); }
+    }
+
+    @keyframes shift {
+      0%   { background-position: 0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* ---------- Navigazione ---------- */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Lo sfondo sfocato sta su ::before: un backdrop-filter sull'header
+       lo renderebbe il riferimento del menu mobile (position: fixed),
+       che coprirebbe solo l'header invece di tutto lo schermo */
+    header::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      border-bottom: 1px solid transparent;
+      transition: background 0.3s, backdrop-filter 0.3s, border-color 0.3s;
+    }
+
+    header.scrolled::before {
+      background: rgba(13, 13, 13, 0.75);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom-color: var(--card-border);
+    }
+
+    .logo {
+      font-weight: 800;
+      letter-spacing: 0.15em;
+      font-size: 1.05rem;
+    }
+
+    .logo span {
+      background: linear-gradient(90deg, var(--violet), var(--pink));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 36px;
+    }
+
+    nav a {
+      position: relative;
+      font-weight: 400;
+      font-size: 0.95rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      transition: color 0.25s;
+    }
+
+    nav a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -6px;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--violet), var(--pink));
+      box-shadow: 0 0 8px var(--pink);
+      transition: width 0.3s;
+    }
+
+    nav a:hover,
+    nav a.active { color: var(--text); }
+
+    nav a:hover::after,
+    nav a.active::after { width: 100%; }
+
+    .menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      width: 32px;
+      height: 24px;
+      position: relative;
+      z-index: 110;
+    }
+
+    .menu-toggle span {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: var(--text);
+      border-radius: 2px;
+      transition: transform 0.3s, opacity 0.3s, top 0.3s;
+    }
+
+    .menu-toggle span:nth-child(1) { top: 2px; }
+    .menu-toggle span:nth-child(2) { top: 11px; }
+    .menu-toggle span:nth-child(3) { top: 20px; }
+
+    .menu-toggle[aria-expanded="true"] span:nth-child(1) { top: 11px; transform: rotate(45deg); }
+    .menu-toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+    .menu-toggle[aria-expanded="true"] span:nth-child(3) { top: 11px; transform: rotate(-45deg); }
+
+    /* ---------- Intestazione pagina ---------- */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 130px 24px 80px;
+    }
+
+    .page-head {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .eyebrow {
+      font-size: 0.8rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    .neon {
+      font-family: 'Monoton', cursive;
+      font-weight: 400;
+      font-size: clamp(2.6rem, 9vw, 5.5rem);
+      line-height: 1.1;
+      letter-spacing: 0.04em;
+      color: #FDF4FF;
+      text-shadow:
+        0 0 4px #fff,
+        0 0 10px #fff,
+        0 0 20px var(--pink),
+        0 0 40px var(--pink),
+        0 0 70px var(--violet),
+        0 0 100px var(--violet);
+    }
+
+    /* ---------- Responsive ---------- */
+    @media (max-width: 760px) {
+      .menu-toggle { display: block; }
+
+      nav {
+        position: fixed;
+        inset: 0;
+        background: rgba(13, 13, 13, 0.96);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s;
+      }
+
+      nav.open {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      nav ul {
+        flex-direction: column;
+        align-items: center;
+        gap: 34px;
+      }
+
+      nav a {
+        font-size: 1.6rem;
+        color: var(--text);
+      }
+
+      main { padding: 110px 16px 60px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+      html { scroll-behavior: auto; }
+    }
+  </style>
+  <link rel="stylesheet" href="player.css">
+  <link rel="stylesheet" href="footer.css">
+  <link rel="stylesheet" href="effects.css">
+  <script src="effects.js"></script>
+</head>
+<body>
+  <div class="bg" aria-hidden="true" data-persist></div>
+
+  <header id="header">
+    <a href="index.html" class="logo">DJ <span>CARLOS</span></a>
+    <button class="menu-toggle" aria-label="Apri menu" aria-expanded="false" aria-controls="main-nav">
+      <span></span><span></span><span></span>
+    </button>
+    <nav id="main-nav" aria-label="Navigazione principale">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="mixes.html" class="active" aria-current="page">Mix</a></li>
+        <li><a href="booking.html">Prenota</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="page-head" data-stagger>
+      <p class="eyebrow">Ascolta ora</p>
+      <h1 class="neon">MIX</h1>
+    </div>
+
+    <!-- Il lettore completo viene inserito qui da player.js -->
+    <div id="player-slot" data-reveal></div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner" data-stagger>
+      <!-- TODO: sostituire con i profili reali di Carlos -->
+      <ul class="social-links" data-stagger>
+        <li><a href="https://soundcloud.com/djcarlos" target="_blank" rel="noopener" aria-label="SoundCloud" title="SoundCloud">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M1.2 14.4c.1 0 .2-.1.2-.2l.3-2-.3-2c0-.1-.1-.2-.2-.2s-.2.1-.2.2L.8 12.2l.2 2c0 .1.1.2.2.2zm1.6 1c.1 0 .2-.1.2-.2l.4-3-.4-3.1c0-.1-.1-.2-.2-.2s-.2.1-.2.2l-.3 3.1.3 3c0 .1.1.2.2.2zm1.7.3c.1 0 .3-.1.3-.3l.3-3.2-.3-4.6c0-.2-.1-.3-.3-.3-.1 0-.3.1-.3.3L3.9 12.2l.3 3.2c0 .2.1.3.3.3zm1.7.1c.2 0 .3-.1.3-.3l.3-3.3-.3-5.1c0-.2-.2-.3-.3-.3-.2 0-.3.1-.3.3l-.3 5.1.3 3.3c0 .2.1.3.3.3zm1.8 0c.2 0 .4-.2.4-.4l.2-3.2-.2-6.2c0-.2-.2-.4-.4-.4s-.4.2-.4.4l-.2 6.2.2 3.2c0 .2.2.4.4.4zm1.8 0c.2 0 .4-.2.4-.4l.2-3.2-.2-6.8c0-.2-.2-.4-.4-.4s-.4.2-.4.4l-.2 6.8.2 3.2c0 .2.2.4.4.4zm1.9 0c.3 0 .5-.2.5-.5l.2-3.1-.2-7.4c0-.3-.2-.5-.5-.5s-.5.2-.5.5l-.2 7.4.2 3.1c0 .3.2.5.5.5zm8.3 0c1.7 0 3-1.3 3-3s-1.3-3-3-3c-.4 0-.8.1-1.2.2-.2-2.8-2.6-5-5.4-5-.7 0-1.4.1-2 .4-.2.1-.3.2-.3.4v9.6c0 .2.2.4.4.4h8.5z"/></svg>
+        </a></li>
+        <li><a href="https://open.spotify.com/artist/djcarlos" target="_blank" rel="noopener" aria-label="Spotify" title="Spotify">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0a12 12 0 1 0 0 24 12 12 0 0 0 0-24zm5.5 17.3a.75.75 0 0 1-1 .25c-2.85-1.74-6.43-2.13-10.66-1.17a.75.75 0 1 1-.33-1.46c4.62-1.05 8.6-.6 11.74 1.33.36.22.47.69.25 1.05zm1.47-3.27a.94.94 0 0 1-1.29.31c-3.26-2-8.23-2.58-12.09-1.41a.94.94 0 0 1-.54-1.8c4.4-1.33 9.88-.69 13.61 1.61.44.27.58.85.31 1.29zm.13-3.4C15.18 8.3 8.73 8.08 5 9.22a1.13 1.13 0 1 1-.66-2.16c4.28-1.3 11.39-1.05 15.88 1.62a1.13 1.13 0 0 1-1.15 1.95z"/></svg>
+        </a></li>
+        <li><a href="https://instagram.com/djcarlos" target="_blank" rel="noopener" aria-label="Instagram" title="Instagram">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.2c3.2 0 3.6 0 4.8.1 3.3.1 4.8 1.7 4.9 4.9.1 1.3.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 3.2-1.7 4.8-4.9 4.9-1.3.1-1.6.1-4.8.1s-3.6 0-4.8-.1c-3.3-.1-4.8-1.7-4.9-4.9C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.8C2.4 3.9 3.9 2.4 7.2 2.3 8.4 2.2 8.8 2.2 12 2.2zM12 0C8.7 0 8.3 0 7.1.1 2.7.3.3 2.7.1 7.1 0 8.3 0 8.7 0 12s0 3.7.1 4.9c.2 4.4 2.6 6.8 7 7 1.2.1 1.6.1 4.9.1s3.7 0 4.9-.1c4.4-.2 6.8-2.6 7-7 .1-1.2.1-1.6.1-4.9s0-3.7-.1-4.9c-.2-4.4-2.6-6.8-7-7C15.7 0 15.3 0 12 0zm0 5.8a6.2 6.2 0 1 0 0 12.4 6.2 6.2 0 0 0 0-12.4zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.4-11.8a1.4 1.4 0 1 0 0 2.9 1.4 1.4 0 0 0 0-2.9z"/></svg>
+        </a></li>
+        <li><a href="https://youtube.com/@djcarlos" target="_blank" rel="noopener" aria-label="YouTube" title="YouTube">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4l6.2 3.6-6.2 3.6z"/></svg>
+        </a></li>
+      </ul>
+      <a class="footer-email" href="mailto:booking@djcarlos.com">booking@djcarlos.com</a>
+      <p class="footer-copy">© <span id="year"></span> DJ Carlos · Mexico City · Tutti i diritti riservati.</p>
+    </div>
+  </footer>
+
+  <script src="player.js"></script>
+  <script type="module">
+    const signal = window.pageSignal;
+
+    // Header allo scroll
+    const header = document.getElementById("header");
+    window.addEventListener("scroll", () => {
+      header.classList.toggle("scrolled", window.scrollY > 30);
+    }, { passive: true, signal });
+
+    // Menu mobile
+    const menuBtn = document.querySelector(".menu-toggle");
+    const nav = document.getElementById("main-nav");
+    menuBtn.addEventListener("click", () => {
+      const open = menuBtn.getAttribute("aria-expanded") === "true";
+      menuBtn.setAttribute("aria-expanded", String(!open));
+      menuBtn.setAttribute("aria-label", open ? "Apri menu" : "Chiudi menu");
+      nav.classList.toggle("open", !open);
+      document.body.style.overflow = open ? "" : "hidden";
+    });
+
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

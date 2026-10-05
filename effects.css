@@ -1,0 +1,117 @@
+/* =========================================================
+   Effetti condivisi — schermata di caricamento e comparsa allo scroll
+   (vedi effects.js)
+   ========================================================= */
+
+/* ---------- Schermata di caricamento ---------- */
+html.is-loading { overflow: hidden; background: #0D0D0D; }
+html.is-loading body { visibility: hidden; }
+
+.page-loader {
+  visibility: visible;
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 34px;
+  padding: 20px;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(139, 92, 246, 0.18), transparent 55%),
+    #0D0D0D;
+  transition: opacity 0.6s ease, visibility 0.6s;
+}
+
+.page-loader.hide { opacity: 0; visibility: hidden; }
+
+.loader-logo {
+  font-family: 'Monoton', cursive;
+  font-weight: 400;
+  font-size: clamp(2.6rem, 11vw, 6.5rem);
+  line-height: 1;
+  letter-spacing: 0.04em;
+  text-align: center;
+  color: #FFF5FB;
+  opacity: 0;
+  transition: transform 0.6s ease;
+}
+
+.loader-logo span { color: #F3EEFF; }
+
+/* Il logo si "accende" come un tubo al neon solo quando il font è pronto */
+.loader-logo.ready { animation: neon-on 1.3s ease-out forwards; }
+
+.loader-logo {
+  text-shadow:
+    0 0 6px #fff,
+    0 0 18px var(--pink),
+    0 0 36px var(--pink),
+    0 0 64px var(--violet),
+    0 0 96px var(--violet);
+}
+
+.loader-logo span {
+  text-shadow:
+    0 0 6px #fff,
+    0 0 18px var(--violet),
+    0 0 36px var(--violet),
+    0 0 64px var(--pink),
+    0 0 96px var(--pink);
+}
+
+.page-loader.hide .loader-logo { transform: scale(1.06); }
+
+@keyframes neon-on {
+  0%   { opacity: 0; }
+  12%  { opacity: 0.9; }
+  16%  { opacity: 0.1; }
+  26%  { opacity: 1; }
+  30%  { opacity: 0.3; }
+  42%  { opacity: 1; }
+  100% { opacity: 1; }
+}
+
+.loader-bar {
+  width: min(320px, 70vw);
+  height: 4px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+/* Il gradiente copre tutta la barra: avanzando passa dal viola al rosa */
+.loader-bar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--violet), var(--pink));
+  box-shadow: 0 0 12px var(--pink);
+  clip-path: inset(0 calc((1 - var(--p, 0)) * 100%) 0 0 round 4px);
+  transition: clip-path 0.25s ease-out;
+}
+
+/* ---------- Comparsa allo scroll ---------- */
+/* html.fx viene aggiunta da effects.js: senza JS tutto resta visibile */
+html.fx [data-reveal]:not(.revealed),
+html.fx [data-stagger] > :not(.revealed) {
+  opacity: 0;
+  translate: 0 28px;
+}
+
+/* Si anima "translate" (non "transform") per non interferire con gli
+   effetti al passaggio del mouse già presenti sugli elementi */
+html.fx .revealing {
+  animation: reveal-in 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes reveal-in {
+  from { opacity: 0; translate: 0 28px; }
+  to   { opacity: 1; translate: 0 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-loader, .loader-bar span { transition: none; }
+  .loader-logo { opacity: 1; }
+}
