@@ -227,9 +227,10 @@
   // laterale "silenzioso"; solo da iOS 17 (navigator.audioSession) lo si può evitare.
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
     (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-  const vizOn = isHttp && !!AC &&
-    !matchMedia("(prefers-reduced-motion: reduce)").matches &&
-    !(isIOS && !("audioSession" in navigator));
+  // Grafo audio: serve al visualizzatore e a regolare il volume dove l'elemento
+  // audio non lo permette (iOS). Con file:// la Web Audio API riceverebbe solo silenzio.
+  const graphOn = isHttp && !!AC && !(isIOS && !("audioSession" in navigator));
+  const vizOn = graphOn && !matchMedia("(prefers-reduced-motion: reduce)").matches;
   const BAR_GAP = 3;
   let actx = null;
   let analyser = null;
@@ -240,16 +241,27 @@
   if (!vizOn) canvas.hidden = true;
 
   // Il grafo audio si crea al primo play (i browser lo consentono solo dopo un gesto dell'utente)
+  // Ogni piatto: sorgente → guadagno (volume) → analizzatore (se attivo) → uscita
   function initAudioGraph() {
-    if (!vizOn || actx) return;
+    if (!graphOn || actx) return;
     try {
       actx = new AC();
-      analyser = actx.createAnalyser();
-      analyser.fftSize = 256;
-      analyser.smoothingTimeConstant = 0.8;
-      decks.forEach(d => actx.createMediaElementSource(d).connect(analyser));
-      analyser.connect(actx.destination);
-      freq = new Uint8Array(analyser.frequencyBinCount);
+      let out = actx.destination;
+      if (vizOn) {
+        analyser = actx.createAnalyser();
+        analyser.fftSize = 256;
+        analyser.smoothingTimeConstant = 0.8;
+        analyser.connect(actx.destination);
+        freq = new Uint8Array(analyser.frequencyBinCount);
+        out = analyser;
+      }
+      decks.forEach(d => {
+        const gain = actx.createGain();
+        actx.createMediaElementSource(d).connect(gain);
+        gain.connect(out);
+        d._gain = gain;
+      });
+      decks.forEach(applyVolume);
     } catch (e) {
       analyser = null;
     }
@@ -321,15 +333,27 @@
   let masterVol = 0.8;
   let muted = false;
 
-  // Su iOS il volume degli elementi audio non è modificabile: niente dissolvenza
-  const canFade = (() => {
+  // Su iOS il volume degli elementi audio è di sola lettura: lì volume e
+  // dissolvenza passano dal guadagno del grafo audio, se disponibile
+  const elementVolume = (() => {
     const a = document.createElement("audio");
     a.volume = 0.5;
     return a.volume === 0.5;
   })();
+  const canFade = () => elementVolume || !!audio._gain;
+
+  // Volume non regolabile in nessun modo (iOS < 17 o pagina aperta da file):
+  // si nasconde la barra, resta il volume del dispositivo
+  if (!elementVolume && !graphOn) volBox.style.display = "none";
 
   function applyVolume(d) {
-    d.volume = Math.max(0, Math.min(1, masterVol * d._fade));
+    const v = Math.max(0, Math.min(1, masterVol * d._fade));
+    if (d._gain) {
+      d._gain.gain.value = v;
+      d.volume = 1;
+    } else {
+      d.volume = v;
+    }
     d.muted = muted;
   }
 
@@ -426,7 +450,7 @@
     const t = PLAYLIST[index];
 
     const old = audio;
-    const crossfade = canFade && autoplay && !old.paused;
+    const crossfade = canFade() && autoplay && !old.paused;
 
     if (crossfade) {
       // Il nuovo brano va sull'altro piatto; il corrente sfuma in uscita,
