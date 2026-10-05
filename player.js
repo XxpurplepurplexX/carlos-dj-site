@@ -342,9 +342,10 @@
   })();
   const canFade = () => elementVolume || !!audio._gain;
 
-  // Volume non regolabile in nessun modo (iOS < 17 o pagina aperta da file):
-  // si nasconde la barra, resta il volume del dispositivo
-  if (!elementVolume && !graphOn) volBox.style.display = "none";
+  // Su iPhone/iPad il volume si regola con i tasti del dispositivo: la barra
+  // si nasconde (anche dove il volume non è regolabile in nessun modo)
+  const volumeHidden = isIOS || (!elementVolume && !graphOn);
+  if (volumeHidden) volBox.style.display = "none";
 
   function applyVolume(d) {
     const v = Math.max(0, Math.min(1, masterVol * d._fade));
@@ -841,6 +842,8 @@
     const v = parseFloat(localStorage.getItem("djc-volume"));
     if (!isNaN(v)) savedVol = v;
   } catch (e) {}
+  // Senza barra il lettore resta al massimo: decidono i tasti del dispositivo
+  if (volumeHidden) savedVol = 1;
   masterVol = vol.value = savedVol;
   updateVolume();
 
